@@ -358,25 +358,88 @@ plot <- plot  %>%
            case_when(pvals <= 0.05 ~ 'significant',
                      TRUE ~ 'null'))
 
-plot <- plot %>% filter(significant == "significant")
+#plot <- plot %>% filter(significant == "significant")
 
 #highlight the 25
 #plot <- plot %>% mutate(highlight_flag = ifelse(protein %in% select_proteins, T, F)) 
+
+plot2 <- plot[!(plot$protein %in% c("CCL21",
+                                      "AFM",
+                                      "EDA",
+                                      "TNFRSF1B",
+                                      "FCGR3B",
+                                      "MPL",
+                                      "CCL22",
+                                      "CCL25",
+                                      "GZMA",
+                                      "CD163",
+                                    "FCER2",
+                                    "ESM1",
+                                    "F7",
+                                    "LTA|LTB",
+                                    "VCAM1",
+                                    "C4AIC4B",
+                                    "B2M",
+                                    "SELL",
+                                    "CD5L",
+                                    "GP1BA",
+                                    "GNLY",
+                                    "SPOCK2",
+                                    "NOTCH1"
+                                    
+                                    )),]
+
+
+
+
+
+plot <- plot  %>% 
+  mutate(significant2 =
+           case_when(pvals <= 0.05 & proteomics == "DNAm" ~ 'significant',
+                     TRUE ~ 'null'))
+
+plot3 <- plot %>% filter(significant2 == "significant")
+
+plot <- plot %>% filter(
+  protein == "STC1" |
+    protein == "RARRES2" |
+    protein == "CCL18" |
+    protein == "CRP" |
+    protein == "IGFBP4" |
+    protein == "HGFAC" |
+    protein == "S100A9" |
+    #  protein == "GP1BA" |
+    protein == "MMP1" |
+    # protein == "GNLY" |
+    protein == "CNTN4" |
+    # protein == "SELL" |
+    protein == "MRC2" |
+    protein == "FAP" |
+    protein == "NTRK3" |
+    protein == "SEMA3E" |
+    protein == "ADIPOQ" |
+    protein == "CNTN4" |
+    protein == "MMP2" |
+    protein == "S100A9" |
+    protein == "THBS2"
+  
+  
+)
 
 ##
 beta_plot <- ggplot(data=plot,
                     aes(x=reorder(protein, -beta),
                         y=beta,
-                         group = proteomics
-                    )
-) +
+                        group = proteomics
+                        )
+                    ) +
   
   geom_bar(aes(fill=reorder(protein, -beta),
-                alpha = proteomics
-  ),
+                alpha = proteomics),
+           
   stat="identity", 
   colour="black",
-  alpha = 0.7,
+  #alpha = 0.7,
   position=position_dodge()) +
   
   geom_errorbar(aes(ymin=beta-se, ymax=beta+se), 
@@ -388,22 +451,22 @@ beta_plot <- ggplot(data=plot,
   ylab("Standardised effect size") 
 
 
-mycolors <- wesanderson::wes_palette("Zissou1", 84, type = "continuous")
+mycolors <- wesanderson::wes_palette("Zissou1", 18, type = "continuous")
 
 p <- beta_plot + 
-  #facet_wrap(vars(proteomics),  scales = "free_y", ncol =3) +
+  #facet_wrap(vars(proteomics),  scales = "free_y", ncol =2) +
   #facet_wrap(vars(positive_negative),  scales = "free_y", ncol =2) +
   scale_fill_manual(values = mycolors) +
   theme_bw() + 
   theme(legend.position= c(0.81, 0.93)) +
   guides(fill = FALSE) +
-  labs(alpha = "inflammation")+
+  #labs(alpha = "inflammation")+
   theme(legend.position = "bottom") +
   #ylim(-0.16, 0.19) +
-  theme(axis.text.x = element_text(size = 9), 
-        axis.text.y = element_text(size = 9)) +
-  theme(axis.title.x = element_text(face = "bold")) +
-  theme(axis.title.y = element_text(face = "bold")) 
+  theme(axis.text.x = element_text(size = 10.5), 
+        axis.text.y = element_text(size = 10.5)) +
+  theme(axis.title.x = element_text(face = "bold",size = 11)) +
+  theme(axis.title.y = element_text(face = "bold",size = 11)) 
 
 p
 
